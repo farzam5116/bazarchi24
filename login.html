@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ورود و ثبت‌نام | بازارچی ۲۴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f2f5fa;font-family:tahoma,Arial;color:#222}
+header{background:#173c70;color:white;text-align:center;padding:22px}
+header a{color:white;text-decoration:none}
+main{max-width:480px;margin:30px auto;padding:15px}
+.card{background:white;padding:24px;border-radius:14px;box-shadow:0 3px 12px #ddd}
+h2{text-align:center;color:#173c70}
+.tabs{display:flex;gap:10px;margin-bottom:20px}
+.tabs button{flex:1}
+button{border:0;padding:12px;border-radius:8px;background:#1764ad;color:white;font:inherit;cursor:pointer}
+input,select{width:100%;padding:13px;margin:9px 0;border:1px solid #ccc;border-radius:8px;font:inherit}
+.submit{width:100%;margin-top:12px}
+.hidden{display:none}
+.notice{background:#fff5d8;padding:12px;border-radius:8px;margin-top:15px;line-height:1.8}
+</style>
+</head>
+<body>
+<header>
+<h1>بازارچی ۲۴</h1>
+<p>ورود به حساب کاربری</p>
+<a href="index.html">بازگشت به صفحه اصلی</a>
+</header>
+<main>
+<div class="card">
+<div class="tabs">
+<button onclick="showTab('login')">ورود</button>
+<button onclick="showTab('register')">ثبت‌نام</button>
+</div>
+
+<form id="loginForm">
+<h2>ورود به حساب</h2>
+<input id="loginPhone" type="tel" required placeholder="شماره موبایل">
+<input id="loginPass" type="password" required placeholder="رمز عبور">
+<button class="submit" type="submit">ورود</button>
+</form>
+
+<form id="registerForm" class="hidden">
+<h2>ایجاد حساب کاربری</h2>
+<input id="name" required placeholder="نام و نام خانوادگی">
+<input id="phone" type="tel" required placeholder="شماره موبایل">
+<input id="email" type="email" placeholder="ایمیل (اختیاری)">
+<input id="password" type="password" required minlength="8" placeholder="رمز عبور حداقل ۸ کاراکتر">
+<select id="role" required>
+<option value="">نوع حساب را انتخاب کنید</option>
+<option value="customer">خریدار</option>
+<option value="seller">فروشنده</option>
+<option value="affiliate">بازاریاب</option>
+</select>
+<button class="submit" type="submit">ثبت‌نام</button>
+</form>
+
+<div id="result"></div>
+<div class="notice">
+این نسخه فقط برای آزمایش رابط کاربری است. اطلاعات حساب در مرورگر ذخیره می‌شود و برای استفاده واقعی نباید رمز عبور را در این نسخه ثبت کنید.
+</div>
+</div>
+</main>
+<script>
+function showTab(tab){
+document.getElementById("loginForm").classList.toggle("hidden",tab!=="login");
+document.getElementById("registerForm").classList.toggle("hidden",tab!=="register");
+document.getElementById("result").textContent="";
+}
+
+function getUsers(){
+return JSON.parse(localStorage.getItem("bz_users")||"[]");
+}
+
+document.getElementById("registerForm").addEventListener("submit",function(e){
+e.preventDefault();
+const users=getUsers();
+const phone=document.getElementById("phone").value.trim();
+if(users.some(u=>u.phone===phone)){
+document.getElementById("result").textContent="این شماره قبلاً ثبت شده است.";
+return;
+}
+const user={
+name:document.getElementById("name").value.trim(),
+phone:phone,
+email:document.getElementById("email").value.trim(),
+password:document.getElementById("password").value,
+role:document.getElementById("role").value
+};
+users.push(user);
+localStorage.setItem("bz_users",JSON.stringify(users));
+document.getElementById("result").textContent="ثبت‌نام آزمایشی انجام شد.";
+this.reset();
+});
+
+document.getElementById("loginForm").addEventListener("submit",function(e){
+e.preventDefault();
+const phone=document.getElementById("loginPhone").value.trim();
+const pass=document.getElementById("loginPass").value;
+const user=getUsers().find(u=>u.phone===phone&&u.password===pass);
+if(!user){
+document.getElementById("result").textContent="اطلاعات ورود صحیح نیست یا حسابی پیدا نشد.";
+return;
+}
+localStorage.setItem("bz_current_user",JSON.stringify({
+name:user.name,phone:user.phone,role:user.role
+}));
+document.getElementById("result").textContent="ورود آزمایشی موفق بود. خوش آمدید "+user.name;
+});
+</script>
+</body>
+</html>
