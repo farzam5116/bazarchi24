@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پنل فروشندگان | بازارچی ۲۴</title>
+<style>
+body{font-family:tahoma;background:#f2f5f3;margin:0;color:#18372e}
+header{background:#123b32;color:white;padding:22px}
+main{max-width:850px;margin:25px auto;padding:12px}
+.box{background:white;padding:20px;border-radius:14px;margin-bottom:18px}
+h2{font-size:19px}
+input,select{width:100%;padding:13px;margin:8px 0 15px;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+button{background:#17664e;color:white;padding:12px 18px;border:0;border-radius:8px;font-family:inherit}
+button:hover{opacity:.9}
+.product{padding:12px;border-bottom:1px solid #ddd}
+small{color:#68756f}
+</style>
+</head>
+<body>
+<header>
+<h2>بازارچی ۲۴ | پنل فروشندگان</h2>
+<p>مدیریت فروشگاه و محصولات شما</p>
+</header>
+<main>
+<div class="box">
+<h2>اطلاعات فروشگاه</h2>
+<label>نام فروشگاه</label>
+<input id="shop" placeholder="نام فروشگاه">
+<label>نام مدیر فروشگاه</label>
+<input id="manager" placeholder="نام و نام خانوادگی">
+<label>شماره تماس</label>
+<input id="phone" type="tel" placeholder="شماره موبایل">
+<button onclick="saveShop()">ذخیره اطلاعات</button>
+</div>
+
+<div class="box">
+<h2>ثبت محصول جدید</h2>
+<label>نام محصول</label>
+<input id="name" placeholder="نام محصول">
+<label>دسته‌بندی</label>
+<select id="category">
+<option>دیجیتال</option>
+<option>پوشاک</option>
+<option>خانه و آشپزخانه</option>
+<option>زیبایی</option>
+<option>اسباب‌بازی</option>
+<option>سایر</option>
+</select>
+<label>قیمت (تومان)</label>
+<input id="price" type="number" placeholder="قیمت">
+<label>موجودی</label>
+<input id="stock" type="number" placeholder="تعداد">
+<label>هزینه ارسال (تومان)</label>
+<input id="shipping" type="number" placeholder="هزینه ارسال">
+<label>روش ارسال</label>
+<select id="delivery">
+<option>ارسال با هزینه فروشنده</option>
+<option>ارسال با هزینه مشتری</option>
+<option>ارسال رایگان</option>
+</select>
+<button onclick="addProduct()">ثبت محصول</button>
+</div>
+
+<div class="box">
+<h2>محصولات ثبت‌شده</h2>
+<div id="list"><small>هنوز محصولی ثبت نشده است.</small></div>
+</div>
+
+<div class="box">
+<h2>مدیریت سفارش‌ها</h2>
+<p>در نسخه عملیاتی، سفارش‌ها، وضعیت ارسال و تسویه حساب در این بخش نمایش داده می‌شوند.</p>
+</div>
+</main>
+<script>
+function saveShop(){
+let shop={
+name:document.getElementById('shop').value,
+manager:document.getElementById('manager').value,
+phone:document.getElementById('phone').value
+};
+if(!shop.name||!shop.phone){alert('نام فروشگاه و شماره تماس را وارد کنید');return}
+localStorage.setItem('bazarchi_shop',JSON.stringify(shop));
+alert('اطلاعات فروشگاه ذخیره شد');
+}
+function addProduct(){
+let name=document.getElementById('name').value;
+let price=document.getElementById('price').value;
+let stock=document.getElementById('stock').value;
+if(!name||!price||!stock){alert('اطلاعات محصول را کامل کنید');return}
+let p={
+name,price,stock,
+category:document.getElementById('category').value,
+shipping:document.getElementById('shipping').value,
+delivery:document.getElementById('delivery').value
+};
+let products=JSON.parse(localStorage.getItem('bazarchi_products')||'[]');
+products.push(p);
+localStorage.setItem('bazarchi_products',JSON.stringify(products));
+showProducts();
+alert('محصول ثبت شد');
+}
+function showProducts(){
+let products=JSON.parse(localStorage.getItem('bazarchi_products')||'[]');
+document.getElementById('list').innerHTML=products.length?products.map(p=>
+`<div class="product"><b>${p.name}</b><br>
+قیمت: ${p.price} تومان<br>
+موجودی: ${p.stock}<br>
+دسته: ${p.category}<br>
+ارسال: ${p.delivery}</div>`).join(''):'هنوز محصولی ثبت نشده است.';
+}
+showProducts();
+</script>
+</body>
+</html>
