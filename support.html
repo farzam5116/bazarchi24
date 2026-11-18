@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>پشتیبانی | بازارچی ۲۴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6fa;font-family:tahoma;color:#222}
+header{background:#173c70;color:white;text-align:center;padding:22px}
+header a{color:white;text-decoration:none}
+main{max-width:800px;margin:25px auto;padding:15px}
+section,.ticket{background:white;padding:20px;border-radius:12px;margin-bottom:18px;box-shadow:0 2px 8px #ddd}
+h2{color:#173c70}
+label{display:block;margin:14px 0 7px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font:inherit}
+textarea{min-height:110px;resize:vertical}
+button{background:#1764ad;color:white;border:0;padding:13px 22px;border-radius:8px;font:inherit;cursor:pointer}
+.ticket strong{color:#1764ad}
+.status{color:#087c49;font-weight:bold}
+</style>
+</head>
+<body>
+<header>
+<h1>بازارچی ۲۴</h1>
+<p>مرکز پشتیبانی و پاسخ‌گویی</p>
+<a href="index.html">بازگشت به صفحه اصلی</a>
+</header>
+<main>
+<section>
+<h2>ثبت درخواست پشتیبانی</h2>
+<form id="ticketForm">
+<label>نام شما</label>
+<input id="customer" required placeholder="نام و نام خانوادگی">
+<label>شماره تماس</label>
+<input id="phone" required type="tel" placeholder="شماره موبایل">
+<label>موضوع درخواست</label>
+<select id="subject" required>
+<option value="">انتخاب موضوع</option>
+<option>پیگیری سفارش</option>
+<option>مشکل پرداخت</option>
+<option>مرجوعی کالا</option>
+<option>مشکل حساب کاربری</option>
+<option>فروشندگی</option>
+<option>بازاریابی و پورسانت</option>
+<option>سایر موارد</option>
+</select>
+<label>شرح درخواست</label>
+<textarea id="message" required placeholder="مشکل یا درخواست خود را توضیح دهید"></textarea>
+<br><br>
+<button type="submit">ثبت درخواست</button>
+</form>
+<div id="notice"></div>
+</section>
+<section>
+<h2>پیگیری تیکت</h2>
+<input id="tracking" placeholder="شماره پیگیری را وارد کنید">
+<br><br>
+<button onclick="trackTicket()">پیگیری</button>
+<div id="trackingResult"></div>
+</section>
+<h2>درخواست‌های ثبت‌شده</h2>
+<div id="ticketList"></div>
+</main>
+<script>
+function getTickets(){
+return JSON.parse(localStorage.getItem("bz_tickets")||"[]");
+}
+function saveTickets(items){
+localStorage.setItem("bz_tickets",JSON.stringify(items));
+}
+function render(){
+let items=getTickets();
+document.getElementById("ticketList").innerHTML=
+items.length?items.slice().reverse().map(t=>`
+<div class="ticket">
+<strong>شماره پیگیری: ${t.id}</strong>
+<p>موضوع: ${t.subject}</p>
+<p>تاریخ ثبت: ${t.date}</p>
+<p>وضعیت: <span class="status">${t.status}</span></p>
+</div>`).join(""):"<p>هنوز درخواستی ثبت نشده است.</p>";
+}
+document.getElementById("ticketForm").addEventListener("submit",function(e){
+e.preventDefault();
+let items=getTickets();
+let ticket={
+id:"BZ-T"+Date.now().toString().slice(-8),
+customer:document.getElementById("customer").value.trim(),
+phone:document.getElementById("phone").value.trim(),
+subject:document.getElementById("subject").value,
+message:document.getElementById("message").value.trim(),
+date:new Date().toLocaleDateString("fa-IR"),
+status:"ثبت اولیه"
+};
+items.push(ticket);
+saveTickets(items);
+document.getElementById("notice").innerHTML=
+`<div class="ticket">درخواست شما ثبت شد.<br><strong>شماره پیگیری: ${ticket.id}</strong><br>این شماره را نگه دارید.</div>`;
+this.reset();
+render();
+});
+function trackTicket(){
+let id=document.getElementById("tracking").value.trim();
+let ticket=getTickets().find(t=>t.id===id);
+document.getElementById("trackingResult").innerHTML=ticket?
+`<div class="ticket"><strong>${ticket.id}</strong><p>موضوع: ${ticket.subject}</p><p>وضعیت: <span class="status">${ticket.status}</span></p></div>`:
+"<p>تیکتی با این شماره پیدا نشد.</p>";
+}
+render();
+</script>
+</body>
+</html>
