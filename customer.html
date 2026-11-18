@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پنل مشتریان | بازارچی ۲۴</title>
+<style>
+body{margin:0;background:#f3f6f4;font-family:tahoma;color:#18372e}
+header{background:#123b32;color:white;padding:22px}
+main{max-width:850px;margin:25px auto;padding:12px}
+.box{background:white;padding:18px;border-radius:13px;margin-bottom:15px}
+input,textarea{width:100%;padding:12px;margin:8px 0 14px;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+button{background:#17664e;color:white;border:0;padding:11px 16px;border-radius:8px;font-family:inherit}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#edf5f0;padding:16px;border-radius:10px;text-align:center}
+.stat b{display:block;font-size:20px;margin-top:8px}
+.item{padding:12px;border-bottom:1px solid #eee}
+small{color:#68756f}
+</style>
+</head>
+<body>
+<header>
+<h2>بازارچی ۲۴ | پنل مشتریان</h2>
+<p>خرید، سفارش‌ها و امتیازهای شما</p>
+</header>
+<main>
+<div class="box">
+<h3>اطلاعات حساب کاربری</h3>
+<input id="name" placeholder="نام و نام خانوادگی">
+<input id="phone" type="tel" placeholder="شماره موبایل">
+<button onclick="saveProfile()">ذخیره اطلاعات</button>
+</div>
+
+<div class="box">
+<h3>خلاصه حساب شما</h3>
+<div class="stats">
+<div class="stat">سفارش‌ها<b id="orders">۰</b></div>
+<div class="stat">امتیازها<b id="points">۰</b></div>
+</div>
+<p><small>اعتبار هر امتیاز: ۲۴ ماه از تاریخ ثبت</small></p>
+</div>
+
+<div class="box">
+<h3>سبد خرید</h3>
+<input id="product" placeholder="نام محصول">
+<input id="price" type="number" placeholder="قیمت محصول به تومان">
+<button onclick="addCart()">افزودن به سبد خرید</button>
+<div id="cart"></div>
+</div>
+
+<div class="box">
+<h3>علاقه‌مندی‌ها</h3>
+<input id="favorite" placeholder="نام محصول مورد علاقه">
+<button onclick="addFavorite()">افزودن</button>
+<div id="favorites"></div>
+</div>
+
+<div class="box">
+<h3>سفارش‌های من</h3>
+<div id="orderList">هنوز سفارشی ثبت نشده است.</div>
+</div>
+
+<div class="box">
+<h3>ثبت نظر و امتیاز</h3>
+<input id="reviewProduct" placeholder="نام محصول یا فروشنده">
+<input id="rating" type="number" min="1" max="5" placeholder="امتیاز از ۱ تا ۵">
+<textarea id="comment" placeholder="نظر شما"></textarea>
+<button onclick="addReview()">ثبت نظر آزمایشی</button>
+<div id="reviews"></div>
+</div>
+</main>
+
+<script>
+const get=(key)=>JSON.parse(localStorage.getItem(key)||'[]');
+const put=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+
+function saveProfile(){
+let name=document.getElementById('name').value.trim();
+let phone=document.getElementById('phone').value.trim();
+if(!name||!phone){alert('نام و موبایل را وارد کنید');return}
+localStorage.setItem('bz24_customer',JSON.stringify({name,phone}));
+alert('اطلاعات ذخیره شد');
+}
+
+function addCart(){
+let name=document.getElementById('product').value.trim();
+let price=Number(document.getElementById('price').value);
+if(!name||price<=0){alert('نام و قیمت معتبر وارد کنید');return}
+let cart=get('bz24_cart');
+cart.push({name,price});
+put('bz24_cart',cart);
+showCart();
+}
+
+function showCart(){
+let cart=get('bz24_cart');
+document.getElementById('cart').innerHTML=cart.map((p,i)=>
+`<div class="item">${p.name} - ${p.price.toLocaleString('fa-IR')} تومان
+<button onclick="removeCart(${i})">حذف</button></div>`).join('')||'سبد خرید خالی است.';
+}
+function removeCart(i){
+let cart=get('bz24_cart');cart.splice(i,1);put('bz24_cart',cart);showCart();
+}
+
+function addFavorite(){
+let name=document.getElementById('favorite').value.trim();
+if(!name)return alert('نام محصول را وارد کنید');
+let list=get('bz24_favorites');list.push(name);put('bz24_favorites',list);showFavorites();
+}
+function showFavorites(){
+document.getElementById('favorites').innerHTML=get('bz24_favorites').map(x=>`<div class="item">${x}</div>`).join('')||'موردی ثبت نشده است.';
+}
+
+function addReview(){
+let product=document.getElementById('reviewProduct').value.trim();
+let rating=Number(document.getElementById('rating').value);
+let comment=document.getElementById('comment').value.trim();
+if(!product||rating<1||rating>5)return alert('نام و امتیاز ۱ تا ۵ را وارد کنید');
+let reviews=get('bz24_reviews');
+reviews.push({product,rating,comment});
+put('bz24_reviews',reviews);showReviews();
+}
+function showReviews(){
+document.getElementById('reviews').innerHTML=get('bz24_reviews').map(r=>
+`<div class="item"><b>${r.product}</b> - ${r.rating} از ۵<br>${r.comment}</div>`).join('');
+}
+
+function showOrders(){
+let orders=get('bz24_orders');
+document.getElementById('orders').innerText=orders.length.toLocaleString('fa-IR');
+document.getElementById('orderList').innerHTML=orders.map(o=>
+`<div class="item">${o.name} - ${o.status}</div>`).join('')||'هنوز سفارشی ثبت نشده است.';
+}
+
+function showPoints(){
+let points=get('bz24_points');
+let now=Date.now();
+points=points.filter(p=>now<p.expiresAt);
+put('bz24_points',points);
+let total=points.reduce((sum,p)=>sum+p.value,0);
+document.getElementById('points').innerText=total.toLocaleString('fa-IR');
+}
+
+function loadProfile(){
+let p=JSON.parse(localStorage.getItem('bz24_customer')||'null');
+if(p){document.getElementById('name').value=p.name;document.getElementById('phone').value=p.phone;}
+}
+loadProfile();showCart();showFavorites();showReviews();showOrders();showPoints();
+</script>
+</body>
+</html>
