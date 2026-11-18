@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مرجوعی و بازپرداخت | بازارچی ۲۴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fa;font-family:tahoma,Arial;color:#292929;line-height:2}
+header{background:#173c70;color:white;text-align:center;padding:24px}
+header a{color:white;text-decoration:none}
+main{max-width:850px;margin:25px auto;padding:15px}
+section{background:white;padding:20px;margin-bottom:16px;border-radius:12px;box-shadow:0 2px 8px #ddd}
+h2{color:#173c70;font-size:19px}
+.note{background:#fff5d8;padding:14px;border-radius:8px}
+input,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font:inherit;margin:8px 0}
+textarea{min-height:100px}
+button{background:#1764ad;color:white;border:0;padding:12px 22px;border-radius:8px;font:inherit}
+#result{margin-top:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>بازارچی ۲۴</h1>
+<p>راهنمای مرجوعی کالا و بازپرداخت وجه</p>
+<a href="index.html">بازگشت به صفحه اصلی</a>
+</header>
+<main>
+<div class="note">
+این صفحه پیش‌نویس راهنمای مرجوعی است. حقوق قانونی خریدار، از جمله مهلت‌ها و استثناهای قانونی، بر مفاد این راهنما مقدم است.
+</div>
+
+<section>
+<h2>۱. چه زمانی می‌توان درخواست مرجوعی داد؟</h2>
+<ul>
+<li>کالای تحویل‌شده با مشخصات سفارش مغایرت داشته باشد.</li>
+<li>کالا آسیب‌دیده یا معیوب به دست خریدار رسیده باشد.</li>
+<li>سفارش ناقص باشد.</li>
+<li>در سایر مواردی که طبق قانون حق انصراف یا مرجوعی وجود دارد.</li>
+</ul>
+</section>
+
+<section>
+<h2>۲. شرایط بررسی درخواست</h2>
+<p>برای بررسی سریع‌تر، شماره سفارش، توضیحات مشکل و در صورت امکان تصویر کالا را آماده کنید.</p>
+<p>برخی کالاها ممکن است طبق قانون یا به دلیل ماهیت و شرایط خاص خود مشمول محدودیت مرجوعی باشند.</p>
+</section>
+
+<section>
+<h2>۳. مراحل درخواست مرجوعی</h2>
+<ol>
+<li>شماره سفارش خود را پیدا کنید.</li>
+<li>فرم درخواست را تکمیل کنید.</li>
+<li>شماره پیگیری درخواست را نگه دارید.</li>
+<li>پس از بررسی، نتیجه و روش ادامه کار به شما اعلام می‌شود.</li>
+</ol>
+</section>
+
+<section>
+<h2>۴. بازپرداخت وجه</h2>
+<p>در صورت تأیید بازپرداخت، مبلغ مطابق روش پرداخت و ضوابط قانونی به خریدار بازگردانده می‌شود.</p>
+<p>زمان نهایی بازپرداخت به تأیید درخواست و فرایند بانکی یا پرداخت‌کننده بستگی دارد.</p>
+</section>
+
+<section>
+<h2>۵. ثبت درخواست مرجوعی</h2>
+<form id="returnForm">
+<label>نام و نام خانوادگی</label>
+<input id="name" required placeholder="نام شما">
+<label>شماره تماس</label>
+<input id="phone" required type="tel" placeholder="شماره تماس">
+<label>شماره سفارش</label>
+<input id="order" required placeholder="مثلاً BZ24001">
+<label>دلیل درخواست</label>
+<input id="reason" required placeholder="شرح کوتاه مشکل">
+<label>توضیحات تکمیلی</label>
+<textarea id="details" placeholder="توضیحات بیشتر"></textarea>
+<button type="submit">ثبت درخواست</button>
+</form>
+<div id="result"></div>
+</section>
+</main>
+<script>
+document.getElementById("returnForm").addEventListener("submit",function(e){
+e.preventDefault();
+const list=JSON.parse(localStorage.getItem("bz_returns")||"[]");
+const item={
+id:"RET"+Date.now(),
+name:document.getElementById("name").value.trim(),
+phone:document.getElementById("phone").value.trim(),
+order:document.getElementById("order").value.trim(),
+reason:document.getElementById("reason").value.trim(),
+details:document.getElementById("details").value.trim(),
+date:new Date().toLocaleDateString("fa-IR"),
+status:"ثبت اولیه"
+};
+list.push(item);
+localStorage.setItem("bz_returns",JSON.stringify(list));
+document.getElementById("result").innerHTML=
+"<p>درخواست شما در این مرورگر ثبت شد. شماره پیگیری: <b>"+item.id+"</b></p>";
+this.reset();
+});
+</script>
+</body>
+</html>
