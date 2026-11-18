@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مدیریت بازارچی ۲۴</title>
+<style>
+body{margin:0;background:#f1f4f2;font-family:tahoma;color:#18372e}
+header{background:#123b32;color:white;padding:20px}
+main{max-width:1000px;margin:20px auto;padding:12px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.box{background:white;border-radius:12px;padding:17px;margin-bottom:14px}
+h2{font-size:19px}
+h3{font-size:15px}
+input,select{width:100%;padding:12px;margin:8px 0;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+button{background:#17664e;color:white;padding:11px 15px;border:0;border-radius:8px;font-family:inherit;cursor:pointer}
+.stat{background:#eaf3ed;padding:16px;border-radius:10px;text-align:center}
+.stat b{display:block;font-size:22px;margin-top:8px}
+.item{padding:12px;border-bottom:1px solid #eee;font-size:13px}
+small{color:#68756f}
+@media(max-width:550px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h2>بازارچی ۲۴ | مدیریت مرکزی</h2>
+<p>مرکز کنترل بازار آنلاین</p>
+</header>
+<main>
+
+<div class="grid">
+<div class="stat">فروشندگان<b>۰</b></div>
+<div class="stat">محصولات<b>۰</b></div>
+<div class="stat">سفارش‌ها<b>۰</b></div>
+<div class="stat">تیکت‌ها<b>۰</b></div>
+</div>
+
+<div class="box">
+<h3>مدیریت فروشندگان</h3>
+<input id="sellerName" placeholder="نام فروشگاه">
+<select id="sellerStatus">
+<option>در انتظار بررسی</option>
+<option>تأیید شده</option>
+<option>تعلیق شده</option>
+</select>
+<button onclick="addSeller()">ثبت وضعیت فروشنده</button>
+<div id="sellers"></div>
+</div>
+
+<div class="box">
+<h3>مدیریت محصولات</h3>
+<input id="productName" placeholder="نام محصول">
+<select id="productStatus">
+<option>در انتظار تأیید</option>
+<option>تأیید شده</option>
+<option>رد شده</option>
+</select>
+<button onclick="addProduct()">ثبت وضعیت محصول</button>
+<div id="products"></div>
+</div>
+
+<div class="box">
+<h3>تنظیم پورسانت پلتفرم</h3>
+<label>درصد پورسانت پیش‌فرض</label>
+<input id="platformRate" type="number" min="0" max="100" value="5">
+<button onclick="saveRate()">ذخیره تنظیم آزمایشی</button>
+</div>
+
+<div class="box">
+<h3>قوانین پورسانت بازاریاب</h3>
+<p>منبع پرداخت پورسانت برای هر محصول باید مستقل تعیین شود.</p>
+<select id="source">
+<option>از سهم فروشنده</option>
+<option>از درآمد پلتفرم</option>
+<option>ترکیبی از فروشنده و پلتفرم</option>
+</select>
+<button onclick="saveSource()">ذخیره تنظیم آزمایشی</button>
+</div>
+
+<div class="box">
+<h3>مدیریت سفارش‌ها</h3>
+<p>ثبت سفارش، تأیید پرداخت، آماده‌سازی، ارسال، تحویل و مرجوعی.</p>
+<small>پورسانت بازاریاب فقط پس از تحویل و پایان مهلت مرجوعی قطعی می‌شود.</small>
+</div>
+
+<div class="box">
+<h3>مدیریت امتیاز مشتریان</h3>
+<p>مدت اعتبار امتیاز: ۲۴ ماه</p>
+<p>تاریخ ثبت، تاریخ انقضا و سوابق تراکنش‌ها باید ثبت شوند.</p>
+</div>
+
+<div class="box">
+<h3>مدیریت پشتیبانی</h3>
+<input id="ticket" placeholder="شماره پیگیری تیکت">
+<select id="ticketStatus">
+<option>در انتظار پاسخ</option>
+<option>در حال بررسی</option>
+<option>پاسخ داده شده</option>
+<option>بسته شده</option>
+</select>
+<button onclick="saveTicket()">ثبت وضعیت تیکت</button>
+<div id="tickets"></div>
+</div>
+
+<div class="box">
+<h3>گزارش و امور مالی</h3>
+<p>گزارش فروش، درآمد پلتفرم، پورسانت بازاریاب، بدهی فروشندگان و تسویه‌ها.</p>
+<small>اطلاعات مالی واقعی پس از اتصال پایگاه داده نمایش داده می‌شوند.</small>
+</div>
+
+</main>
+
+<script>
+function read(k){return JSON.parse(localStorage.getItem(k)||'[]')}
+function write(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function addSeller(){
+let n=sellerName.value.trim();
+if(!n)return alert('نام فروشگاه را وارد کنید');
+let a=read('admin_sellers');
+a.push({name:n,status:sellerStatus.value});
+write('admin_sellers',a);showSellers();sellerName.value='';
+}
+function showSellers(){
+sellers.innerHTML=read('admin_sellers').map(x=>
+`<div class="item">${x.name} - ${x.status}</div>`).join('');
+}
+function addProduct(){
+let n=productName.value.trim();
+if(!n)return alert('نام محصول را وارد کنید');
+let a=read('admin_products');
+a.push({name:n,status:productStatus.value});
+write('admin_products',a);showProducts();productName.value='';
+}
+function showProducts(){
+products.innerHTML=read('admin_products').map(x=>
+`<div class="item">${x.name} - ${x.status}</div>`).join('');
+}
+function saveRate(){
+let v=Number(platformRate.value);
+if(v<0||v>100)return alert('درصد باید بین صفر تا صد باشد');
+localStorage.setItem('admin_rate',v);
+alert('تنظیم آزمایشی ذخیره شد');
+}
+function saveSource(){
+localStorage.setItem('admin_source',source.value);
+alert('منبع پورسانت آزمایشی ذخیره شد');
+}
+function saveTicket(){
+let n=ticket.value.trim();
+if(!n)return alert('شماره تیکت را وارد کنید');
+let a=read('admin_tickets');
+a.push({number:n,status:ticketStatus.value});
+write('admin_tickets',a);showTickets();ticket.value='';
+}
+function showTickets(){
+tickets.innerHTML=read('admin_tickets').map(x=>
+`<div class="item">${x.number} - ${x.status}</div>`).join('');
+}
+showSellers();showProducts();showTickets();
+if(localStorage.getItem('admin_rate'))platformRate.value=localStorage.getItem('admin_rate');
+if(localStorage.getItem('admin_source'))source.value=localStorage.getItem('admin_source');
+</script>
+</body>
+</html>
