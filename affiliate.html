@@ -1,0 +1,97 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>پنل بازاریابان | بازارچی ۲۴</title>
+<style>
+body{margin:0;background:#f3f6f4;font-family:tahoma;color:#18372e}
+header{background:#123b32;color:white;padding:22px}
+main{max-width:850px;margin:25px auto;padding:12px}
+.box{background:white;padding:20px;border-radius:14px;margin-bottom:16px}
+h2{font-size:19px}
+input{width:100%;padding:13px;margin:10px 0;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+button{background:#17664e;color:white;border:0;padding:12px 17px;border-radius:8px;font-family:inherit}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#edf5f0;padding:18px;border-radius:10px;text-align:center}
+.stat b{display:block;font-size:22px;margin-top:8px}
+.note{font-size:12px;color:#68756f;line-height:2}
+</style>
+</head>
+<body>
+<header>
+<h2>بازارچی ۲۴ | پنل بازاریابان</h2>
+<p>مدیریت لینک‌ها و درآمد همکاری در فروش</p>
+</header>
+<main>
+<div class="box">
+<h2>اطلاعات بازاریاب</h2>
+<input id="name" placeholder="نام و نام خانوادگی">
+<input id="phone" type="tel" placeholder="شماره موبایل">
+<button onclick="saveProfile()">ذخیره اطلاعات</button>
+</div>
+
+<div class="box">
+<h2>لینک اختصاصی بازاریابی</h2>
+<p class="note">پس از انتخاب محصول، لینک معرفی آزمایشی برای آن ساخته می‌شود.</p>
+<input id="product" placeholder="نام محصول">
+<button onclick="makeLink()">ساخت لینک اختصاصی</button>
+<input id="link" readonly placeholder="لینک شما اینجا نمایش داده می‌شود">
+<button onclick="copyLink()">کپی لینک</button>
+</div>
+
+<div class="box">
+<h2>گزارش عملکرد</h2>
+<div class="stats">
+<div class="stat">تعداد کلیک‌ها<b id="clicks">۰</b></div>
+<div class="stat">فروش‌های تأییدشده<b id="sales">۰</b></div>
+<div class="stat">پورسانت<b id="commission">۰ تومان</b></div>
+<div class="stat">موجودی قابل تسویه<b id="balance">۰ تومان</b></div>
+</div>
+<p class="note">اعداد این نسخه آزمایشی هستند و فروش واقعی یا پورسانت واقعی ثبت نمی‌کنند.</p>
+</div>
+
+<div class="box">
+<h2>درخواست تسویه حساب</h2>
+<input id="amount" type="number" placeholder="مبلغ درخواستی به تومان">
+<input id="card" placeholder="شماره شبای بانکی">
+<button onclick="requestPayment()">ثبت درخواست</button>
+<p id="result" class="note"></p>
+</div>
+</main>
+<script>
+function saveProfile(){
+let name=document.getElementById('name').value.trim();
+let phone=document.getElementById('phone').value.trim();
+if(!name||!phone){alert('نام و شماره موبایل را وارد کنید');return}
+localStorage.setItem('bazarchi_affiliate',JSON.stringify({name,phone}));
+alert('اطلاعات آزمایشی ذخیره شد');
+}
+function makeLink(){
+let product=document.getElementById('product').value.trim();
+if(!product){alert('نام محصول را وارد کنید');return}
+let code='BZ24-'+Math.random().toString(36).slice(2,9).toUpperCase();
+let url=location.origin+location.pathname.replace('affiliate.html','')+'index.html?ref='+code;
+document.getElementById('link').value=url;
+localStorage.setItem('bazarchi_ref_'+code,product);
+}
+function copyLink(){
+let value=document.getElementById('link').value;
+if(!value){alert('ابتدا لینک بسازید');return}
+if(navigator.clipboard&&location.protocol==='https:'){
+navigator.clipboard.writeText(value).then(()=>alert('لینک کپی شد'));
+}else{
+document.getElementById('link').select();
+alert('لینک انتخاب شد؛ آن را کپی کنید');
+}
+}
+function requestPayment(){
+let amount=Number(document.getElementById('amount').value);
+let card=document.getElementById('card').value.trim();
+if(!amount||amount<=0||!card){alert('مبلغ و شماره شبا را وارد کنید');return}
+document.getElementById('result').innerText='درخواست آزمایشی ثبت شد. پرداخت واقعی هنوز فعال نیست.';
+}
+</script>
+</body>
+</html>
