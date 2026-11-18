@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>مقایسه فروشندگان | بازارچی ۲۴</title>
+<style>
+body{margin:0;background:#f3f6f4;font-family:tahoma;color:#18372e}
+header{background:#123b32;color:white;padding:20px}
+main{max-width:950px;margin:20px auto;padding:12px}
+.box{background:white;padding:18px;border-radius:13px;margin-bottom:15px}
+input,select{width:100%;padding:12px;margin:8px 0 14px;box-sizing:border-box;border:1px solid #ddd;border-radius:8px;font-family:inherit}
+button{background:#17664e;color:white;border:0;padding:11px 15px;border-radius:8px;font-family:inherit}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{padding:13px;border-bottom:1px solid #eee;text-align:center;font-size:13px}
+th{background:#eaf3ed}
+.wrap{overflow-x:auto}
+.best{color:#08734c;font-weight:bold}
+small{color:#68756f}
+</style>
+</head>
+<body>
+<header>
+<h2>بازارچی ۲۴ | مقایسه فروشندگان</h2>
+<p>انتخاب آگاهانه با مقایسه قیمت و کیفیت</p>
+</header>
+<main>
+<div class="box">
+<h3>جستجوی محصول</h3>
+<input id="search" placeholder="نام محصول را وارد کنید">
+<label>مرتب‌سازی</label>
+<select id="sort" onchange="render()">
+<option value="price">کمترین قیمت</option>
+<option value="rating">بیشترین امتیاز</option>
+<option value="sales">بیشترین فروش</option>
+<option value="delivery">سریع‌ترین ارسال</option>
+<option value="total">کمترین قیمت با ارسال</option>
+</select>
+<label>حداکثر قیمت (تومان)</label>
+<input id="maxPrice" type="number" placeholder="بدون محدودیت">
+<button onclick="render()">اعمال فیلتر</button>
+</div>
+
+<div class="box">
+<h3>نتایج مقایسه فروشندگان</h3>
+<p><small>اطلاعات زیر نمونه نمایشی هستند و قیمت واقعی فروشندگان نیستند.</small></p>
+<div class="wrap">
+<table>
+<thead>
+<tr>
+<th>فروشگاه</th>
+<th>قیمت</th>
+<th>ارسال</th>
+<th>امتیاز</th>
+<th>فروش موفق</th>
+<th>زمان ارسال</th>
+<th>مجموع</th>
+</tr>
+</thead>
+<tbody id="results"></tbody>
+</table>
+</div>
+</div>
+
+<div class="box">
+<h3>معیارهای ارزیابی</h3>
+<p>⭐ رضایت و امتیاز مشتریان</p>
+<p>💰 قیمت نهایی با احتساب ارسال</p>
+<p>🚚 زمان تحویل سفارش</p>
+<p>🏆 سابقه فروش موفق و ضمانت</p>
+</div>
+</main>
+<script>
+const sellers=[
+{name:'فروشگاه آریا',price:1200000,ship:50000,rating:4.8,sales:320,time:1},
+{name:'فروشگاه پارس',price:1150000,ship:120000,rating:4.5,sales:210,time:2},
+{name:'فروشگاه نوین',price:1280000,ship:0,rating:4.9,sales:450,time:1},
+{name:'فروشگاه سپهر',price:1180000,ship:80000,rating:4.2,sales:150,time:3}
+];
+const fmt=n=>n.toLocaleString('fa-IR')+' تومان';
+function render(){
+let max=Number(document.getElementById('maxPrice').value)||Infinity;
+let q=document.getElementById('search').value.trim();
+let sort=document.getElementById('sort').value;
+let list=sellers.filter(s=>s.price<=max&&s.name.includes(q));
+list.sort((a,b)=>{
+if(sort==='rating')return b.rating-a.rating;
+if(sort==='sales')return b.sales-a.sales;
+if(sort==='delivery')return a.time-b.time;
+if(sort==='total')return (a.price+a.ship)-(b.price+b.ship);
+return a.price-b.price;
+});
+document.getElementById('results').innerHTML=list.length?
+list.map((s,i)=>`<tr>
+<td>${s.name}${i===0&&sort==='total'?' 🏆':''}</td>
+<td>${fmt(s.price)}</td>
+<td>${s.ship===0?'رایگان':fmt(s.ship)}</td>
+<td>${s.rating} از ۵</td>
+<td>${s.sales.toLocaleString('fa-IR')}</td>
+<td>${s.time.toLocaleString('fa-IR')} روز</td>
+<td class="best">${fmt(s.price+s.ship)}</td>
+</tr>`).join(''):
+'<tr><td colspan="7">فروشنده‌ای مطابق فیلتر پیدا نشد.</td></tr>';
+}
+render();
+</script>
+</body>
+</html>
