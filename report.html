@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>گزارش تخلف | بازارچی ۲۴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fa;font-family:tahoma,Arial;color:#222;line-height:2}
+header{background:#173c70;color:white;text-align:center;padding:22px}
+header a{color:white;text-decoration:none}
+main{max-width:750px;margin:25px auto;padding:15px}
+section{background:white;padding:22px;border-radius:12px;box-shadow:0 2px 8px #ddd}
+h2{color:#173c70}
+label{display:block;margin:12px 0 5px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font:inherit}
+textarea{min-height:120px}
+button{background:#1764ad;color:white;border:0;padding:13px 22px;border-radius:8px;font:inherit;cursor:pointer}
+.notice{margin-top:15px;background:#e8f6ee;padding:12px;border-radius:8px}
+</style>
+</head>
+<body>
+<header>
+<h1>بازارچی ۲۴</h1>
+<p>سامانه گزارش تخلف و شکایت</p>
+<a href="index.html">بازگشت به صفحه اصلی</a>
+</header>
+<main>
+<section>
+<h2>ثبت گزارش تخلف</h2>
+<p>اگر با کالای نامعتبر، اطلاعات نادرست یا رفتار نامناسب فروشنده روبه‌رو شده‌اید، گزارش خود را ثبت کنید.</p>
+
+<form id="reportForm">
+<label>نام گزارش‌دهنده</label>
+<input id="name" required placeholder="نام شما">
+
+<label>شماره تماس</label>
+<input id="phone" required type="tel" placeholder="شماره تماس">
+
+<label>شماره سفارش یا شناسه محصول (اختیاری)</label>
+<input id="reference" placeholder="شماره سفارش یا محصول">
+
+<label>نوع گزارش</label>
+<select id="type" required>
+<option value="">انتخاب کنید</option>
+<option>کالای غیر اصل یا نامعتبر</option>
+<option>توضیحات نادرست محصول</option>
+<option>قیمت‌گذاری نادرست</option>
+<option>ارسال نشدن سفارش</option>
+<option>رفتار نامناسب فروشنده</option>
+<option>تخلف بازاریاب</option>
+<option>سایر موارد</option>
+</select>
+
+<label>شرح کامل گزارش</label>
+<textarea id="description" required placeholder="جزئیات موضوع را بنویسید"></textarea>
+
+<br><br>
+<button type="submit">ثبت گزارش</button>
+</form>
+<div id="result"></div>
+</section>
+</main>
+<script>
+document.getElementById("reportForm").addEventListener("submit",function(e){
+e.preventDefault();
+const reports=JSON.parse(localStorage.getItem("bz_reports")||"[]");
+const report={
+id:"RPT"+Date.now(),
+name:document.getElementById("name").value.trim(),
+phone:document.getElementById("phone").value.trim(),
+reference:document.getElementById("reference").value.trim(),
+type:document.getElementById("type").value,
+description:document.getElementById("description").value.trim(),
+date:new Date().toLocaleDateString("fa-IR"),
+status:"ثبت اولیه"
+};
+reports.push(report);
+localStorage.setItem("bz_reports",JSON.stringify(reports));
+document.getElementById("result").innerHTML=
+'<div class="notice">گزارش در این مرورگر ذخیره شد.<br>شماره پیگیری: <b>'+report.id+'</b></div>';
+this.reset();
+});
+</script>
+</body>
+</html>
