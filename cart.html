@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>سبد خرید | بازارچی ۲۴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fa;font-family:tahoma,Arial;color:#222}
+header{background:#173c70;color:white;text-align:center;padding:22px}
+header a{color:white;text-decoration:none}
+main{max-width:850px;margin:25px auto;padding:15px}
+.card{background:white;padding:18px;margin-bottom:15px;border-radius:12px;box-shadow:0 2px 8px #ddd}
+.product{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+input{width:75px;padding:9px;border:1px solid #ccc;border-radius:7px}
+button{background:#1764ad;color:white;border:0;padding:11px 17px;border-radius:8px;font:inherit;cursor:pointer}
+.remove{background:#b52d35}
+.total{font-size:20px;font-weight:bold;color:#173c70}
+.empty{text-align:center;padding:25px;background:white;border-radius:10px}
+</style>
+</head>
+<body>
+<header>
+<h1>بازارچی ۲۴</h1>
+<p>سبد خرید شما</p>
+<a href="index.html">ادامه خرید</a>
+</header>
+<main>
+<h2>محصولات انتخاب‌شده</h2>
+<div id="cartItems"></div>
+<div class="card">
+<p>جمع کالاها: <span id="subtotal">۰</span> تومان</p>
+<p>هزینه ارسال: <span id="shipping">۰</span> تومان</p>
+<p class="total">مبلغ نهایی: <span id="total">۰</span> تومان</p>
+<button onclick="checkout()">ثبت آزمایشی سفارش</button>
+<div id="message"></div>
+</div>
+</main>
+<script>
+function money(n){
+return Math.max(0,Number(n)||0).toLocaleString("fa-IR");
+}
+function getCart(){
+return JSON.parse(localStorage.getItem("bz_cart")||"[]");
+}
+function saveCart(items){
+localStorage.setItem("bz_cart",JSON.stringify(items));
+}
+function render(){
+const items=getCart();
+const box=document.getElementById("cartItems");
+if(!items.length){
+box.innerHTML='<div class="empty">سبد خرید شما خالی است.</div>';
+}else{
+box.innerHTML=items.map((p,i)=>`
+<div class="card product">
+<div><b>${p.name||"محصول"}</b><p>${money(p.price)} تومان</p></div>
+<div>
+<label>تعداد</label>
+<input type="number" min="1" value="${Math.max(1,Number(p.qty)||1)}" onchange="changeQty(${i},this.value)">
+<button class="remove" onclick="removeItem(${i})">حذف</button>
+</div>
+</div>`).join("");
+}
+const subtotal=items.reduce((s,p)=>s+(Number(p.price)||0)*(Number(p.qty)||1),0);
+const shipping=items.reduce((s,p)=>s+(Number(p.shipping)||0)*(Number(p.qty)||1),0);
+document.getElementById("subtotal").textContent=money(subtotal);
+document.getElementById("shipping").textContent=money(shipping);
+document.getElementById("total").textContent=money(subtotal+shipping);
+}
+function changeQty(i,value){
+let items=getCart();
+items[i].qty=Math.max(1,parseInt(value)||1);
+saveCart(items);
+render();
+}
+function removeItem(i){
+let items=getCart();
+items.splice(i,1);
+saveCart(items);
+render();
+}
+function checkout(){
+const items=getCart();
+if(!items.length){
+document.getElementById("message").textContent="سبد خرید خالی است.";
+return;
+}
+let orders=JSON.parse(localStorage.getItem("bz_orders")||"[]");
+let subtotal=items.reduce((s,p)=>s+(Number(p.price)||0)*(Number(p.qty)||1),0);
+let shipping=items.reduce((s,p)=>s+(Number(p.shipping)||0)*(Number(p.qty)||1),0);
+const order={
+id:"BZ"+Date.now(),
+date:new Date().toLocaleDateString("fa-IR"),
+amount:money(subtotal+shipping)+" تومان",
+payment:"پرداخت نشده",
+status:"ثبت آزمایشی",
+tracking:"هنوز صادر نشده",
+items:items
+};
+orders.push(order);
+localStorage.setItem("bz_orders",JSON.stringify(orders));
+localStorage.removeItem("bz_cart");
+document.getElementById("message").textContent="سفارش آزمایشی ثبت شد. شماره سفارش: "+order.id;
+render();
+}
+render();
+</script>
+</body>
+</html>
