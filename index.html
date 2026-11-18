@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>بازارچی ۲۴ | بازار آنلاین</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f5;color:#172b25;font-family:tahoma,Arial}
+header{background:#123b32;color:white;padding:18px}
+.logo{font-size:27px;font-weight:bold}
+.logo span{color:#f4bd50}
+nav{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+nav a{color:white;text-decoration:none;background:#ffffff20;padding:10px;border-radius:8px;font-size:13px}
+main{max-width:1050px;margin:20px auto;padding:12px}
+.hero{background:linear-gradient(120deg,#123b32,#28745d);color:white;padding:30px;border-radius:18px}
+.hero h1{font-size:25px}
+.hero p{line-height:2}
+button{background:#eeb94f;border:0;border-radius:9px;padding:12px 20px;font-weight:bold}
+.search{display:flex;gap:8px;margin:20px 0}
+input{width:100%;padding:13px;border:1px solid #ddd;border-radius:9px}
+h2{font-size:19px;margin-top:28px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card{background:white;padding:18px;border-radius:13px;text-align:center;box-shadow:0 2px 8px #00000008}
+.icon{font-size:35px}
+.price{color:#167453;font-weight:bold}
+section{scroll-margin-top:15px}
+footer{text-align:center;background:#123b32;color:white;padding:25px;margin-top:30px}
+@media(max-width:600px){.grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">بازارچی <span>۲۴</span></div>
+<p>بازار هوشمند خرید، فروش و همکاری در فروش</p>
+<nav>
+<a href="#home">خانه</a>
+<a href="#products">محصولات</a>
+<a href="#seller">فروشنده شوید</a>
+<a href="#affiliate">بازاریاب شوید</a>
+<a href="#support">پشتیبانی</a>
+</nav>
+</header>
+
+<main>
+<section class="hero" id="home">
+<h1>به بازارچی ۲۴ خوش آمدید</h1>
+<p>خرید آسان، مقایسه فروشندگان و انتخاب هوشمندانه در یک بازار آنلاین.</p>
+<button onclick="location.href='#products'">مشاهده محصولات</button>
+</section>
+
+<div class="search">
+<input id="search" placeholder="جستجوی محصولات...">
+<button onclick="findProduct()">جستجو</button>
+</div>
+
+<section id="products">
+<h2>دسته‌بندی محصولات</h2>
+<div class="grid">
+<div class="card"><div class="icon">📱</div>موبایل و دیجیتال</div>
+<div class="card"><div class="icon">👕</div>پوشاک</div>
+<div class="card"><div class="icon">🏠</div>خانه و آشپزخانه</div>
+<div class="card"><div class="icon">✨</div>زیبایی و سلامت</div>
+<div class="card"><div class="icon">🧸</div>اسباب‌بازی</div>
+<div class="card"><div class="icon">📦</div>سایر محصولات</div>
+</div>
+
+<h2>محصولات پیشنهادی</h2>
+<div class="grid" id="items">
+<div class="card"><div class="icon">🎧</div><h3>هدفون بی‌سیم</h3><p class="price">۱٬۲۵۰٬۰۰۰ تومان</p></div>
+<div class="card"><div class="icon">⌚</div><h3>ساعت هوشمند</h3><p class="price">۲٬۴۹۰٬۰۰۰ تومان</p></div>
+<div class="card"><div class="icon">👜</div><h3>کیف روزمره</h3><p class="price">۸۹۰٬۰۰۰ تومان</p></div>
+</div>
+</section>
+
+<section id="seller">
+<h2>فروشنده شوید</h2>
+<div class="card">
+<p>محصولات خود را در بازارچی ۲۴ عرضه کنید و سفارش‌هایتان را مدیریت کنید.</p>
+<button onclick="alert('بخش ثبت‌نام فروشندگان در حال ساخت است')">ثبت‌نام فروشنده</button>
+</div>
+</section>
+
+<section id="affiliate">
+<h2>همکاری در فروش</h2>
+<div class="card">
+<p>با معرفی محصولات و دریافت پورسانت، درآمد کسب کنید.</p>
+<button onclick="alert('بخش بازاریابان در حال ساخت است')">شروع همکاری</button>
+</div>
+</section>
+
+<section id="support">
+<h2>پشتیبانی</h2>
+<div class="card">
+<p>پشتیبانی از طریق تیکت با شماره پیگیری مستقل.</p>
+<button onclick="alert('سامانه تیکت در حال ساخت است')">ثبت درخواست</button>
+</div>
+</section>
+</main>
+
+<footer>
+بازارچی ۲۴ | خرید، فروش و همکاری در فروش
+</footer>
+
+<script>
+function findProduct(){
+const q=document.getElementById('search').value.trim();
+const cards=document.querySelectorAll('#items .card');
+let count=0;
+cards.forEach(card=>{
+const match=card.innerText.includes(q);
+card.style.display=match?'block':'none';
+if(match)count++;
+});
+if(!count)alert('محصولی پیدا نشد');
+}
+</script>
+
+</body>
+</html>
