@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سفارش‌های من | بازارچی ۲۴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fa;font-family:tahoma,Arial;color:#222}
+header{background:#173c70;color:white;padding:22px 15px;text-align:center}
+main{max-width:900px;margin:25px auto;padding:15px}
+h2{color:#173c70}
+.order{background:white;border-radius:12px;padding:18px;margin:15px 0;box-shadow:0 2px 9px #ddd}
+.row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:9px 0}
+.status{color:#087c49;font-weight:bold}
+input{width:100%;padding:13px;border:1px solid #ccc;border-radius:8px;margin:8px 0}
+button{background:#1764ad;color:white;border:0;padding:12px 20px;border-radius:8px;cursor:pointer}
+.empty{background:white;padding:25px;border-radius:10px;text-align:center}
+a{color:white;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+<h1>بازارچی ۲۴</h1>
+<p>سفارش‌ها و پیگیری خرید</p>
+<a href="index.html">بازگشت به صفحه اصلی</a>
+</header>
+<main>
+<h2>پیگیری سفارش</h2>
+<input id="search" placeholder="شماره سفارش را وارد کنید">
+<button onclick="searchOrder()">جست‌وجوی سفارش</button>
+<div id="result"></div>
+<h2>سفارش‌های من</h2>
+<div id="orders"></div>
+</main>
+<script>
+const sampleOrders=[
+{ id:"BZ24001",date:"۱۴۰۵/۰۸/۲۰",amount:"۲,۵۰۰,۰۰۰ تومان",payment:"پرداخت نمونه",status:"در حال آماده‌سازی",tracking:"TRK24001"},
+{ id:"BZ24002",date:"۱۴۰۵/۰۸/۲۱",amount:"۸۵۰,۰۰۰ تومان",payment:"پرداخت نمونه",status:"تحویل به شرکت حمل‌ونقل",tracking:"TRK24002"}
+];
+
+function getOrders(){
+return JSON.parse(localStorage.getItem("bz_orders")||"[]");
+}
+function showOrder(o){
+return `<div class="order">
+<div class="row"><b>شماره سفارش:</b><b>${o.id}</b></div>
+<div class="row"><span>تاریخ: ${o.date||"ثبت نشده"}</span></div>
+<div class="row"><span>مبلغ: ${o.amount||"ثبت نشده"}</span></div>
+<div class="row"><span>پرداخت: ${o.payment||"در انتظار پرداخت"}</span></div>
+<div class="row"><span>وضعیت: <span class="status">${o.status||"در انتظار تأیید"}</span></span></div>
+<div class="row"><span>کد رهگیری: ${o.tracking||"هنوز صادر نشده"}</span></div>
+</div>`;
+}
+function render(){
+let orders=getOrders();
+document.getElementById("orders").innerHTML=
+orders.length?orders.map(showOrder).join("") :
+'<div class="empty">هنوز سفارشی در حساب شما ثبت نشده است.</div>';
+}
+function searchOrder(){
+let id=document.getElementById("search").value.trim();
+let all=[...getOrders(),...sampleOrders];
+let found=all.find(o=>o.id===id);
+document.getElementById("result").innerHTML=found?
+showOrder(found):
+'<div class="empty">سفارشی با این شماره پیدا نشد.</div>';
+}
+render();
+</script>
+</body>
+</html>
