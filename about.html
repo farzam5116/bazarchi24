@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>درباره ما | بازارچی ۲۴</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6fa;font-family:tahoma,Arial;color:#292929;line-height:2}
+header{background:#173c70;color:white;text-align:center;padding:25px 15px}
+header a{color:white;text-decoration:none}
+main{max-width:850px;margin:25px auto;padding:15px}
+section{background:white;padding:22px;margin-bottom:18px;border-radius:12px;box-shadow:0 2px 8px #ddd}
+h2{color:#173c70}
+input,textarea{width:100%;padding:13px;margin:7px 0 15px;border:1px solid #ccc;border-radius:8px;font:inherit}
+textarea{min-height:110px}
+button{background:#1764ad;color:white;border:0;padding:13px 24px;border-radius:8px;font:inherit;cursor:pointer}
+footer{text-align:center;padding:20px;color:#666}
+</style>
+</head>
+<body>
+<header>
+<h1>بازارچی ۲۴</h1>
+<p>بازاری برای خرید، فروش و همکاری هوشمند</p>
+<a href="index.html">بازگشت به صفحه اصلی</a>
+</header>
+<main>
+<section>
+<h2>درباره بازارچی ۲۴</h2>
+<p>بازارچی ۲۴ یک ایده برای ایجاد بازار اینترنتی چندفروشندگی است؛ بستری که در آن خریداران، فروشندگان و بازاریابان بتوانند در یک محیط مشترک با یکدیگر همکاری کنند.</p>
+<p>هدف ما فراهم کردن تجربه‌ای ساده، شفاف و قابل اعتماد برای خرید و فروش آنلاین است.</p>
+</section>
+
+<section>
+<h2>اهداف ما</h2>
+<ul>
+<li>فراهم کردن امکان فعالیت برای فروشندگان مختلف</li>
+<li>ایجاد فرصت همکاری و درآمدزایی برای بازاریابان</li>
+<li>کمک به خریداران برای بررسی و مقایسه محصولات</li>
+<li>ارائه ابزارهای پیگیری سفارش و پشتیبانی</li>
+<li>توسعه یک بازار آنلاین امن و قابل اعتماد</li>
+</ul>
+</section>
+
+<section>
+<h2>تماس با ما</h2>
+<p>برای ارتباط با تیم بازارچی ۲۴ می‌توانید پیام خود را از طریق فرم زیر ارسال کنید.</p>
+<form id="contactForm">
+<label>نام و نام خانوادگی</label>
+<input id="name" required placeholder="نام شما">
+<label>شماره تماس یا ایمیل</label>
+<input id="contact" required placeholder="راه ارتباطی شما">
+<label>موضوع پیام</label>
+<input id="subject" required placeholder="موضوع پیام">
+<label>متن پیام</label>
+<textarea id="message" required placeholder="پیام خود را بنویسید"></textarea>
+<button type="submit">ثبت پیام</button>
+</form>
+<div id="result"></div>
+</section>
+</main>
+<footer>
+بازارچی ۲۴ | همراه خرید و فروش هوشمند
+</footer>
+<script>
+document.getElementById("contactForm").addEventListener("submit",function(e){
+e.preventDefault();
+const messages=JSON.parse(localStorage.getItem("bz_messages")||"[]");
+const item={
+id:"MSG"+Date.now(),
+name:document.getElementById("name").value.trim(),
+contact:document.getElementById("contact").value.trim(),
+subject:document.getElementById("subject").value.trim(),
+message:document.getElementById("message").value.trim(),
+date:new Date().toLocaleDateString("fa-IR")
+};
+messages.push(item);
+localStorage.setItem("bz_messages",JSON.stringify(messages));
+document.getElementById("result").textContent="پیام شما در همین مرورگر ذخیره شد. شماره پیام: "+item.id;
+this.reset();
+});
+</script>
+</body>
+</html>
